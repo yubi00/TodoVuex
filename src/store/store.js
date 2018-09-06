@@ -5,13 +5,18 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state: {
-        todos: [
-            {name: 'Add your Todo', completed: false, editing: false},
-            
-          ],
+        todos: localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [{
+            name: 'Add a new todo list',
+            completed: false,
+            editing: false
+          }],
 
           newtodo: '',
-          beforeedit: ''
+          beforeedit: '',
+          checked: false,
+          todosleft: 0,
+          flag: 0
+          
 
         
     },
@@ -29,9 +34,11 @@ export const store = new Vuex.Store({
             });
 
             state.newtodo = '';
+            localStorage.setItem('items', JSON.stringify(state.todos));
         },
         deleteTodo: (state, index) => {
             state.todos.splice(index, 1);
+            localStorage.setItem('items', JSON.stringify(state.todos));
         },
 
         updateTodo: (state, todo) => {
@@ -41,12 +48,56 @@ export const store = new Vuex.Store({
 
         doneEdit: (state, todo) => {
             todo.editing = false;
+            localStorage.setItem('items', JSON.stringify(state.todos));
         },
 
         cancelEdit: (state, todo) => {
             todo.editing = false;
             todo.name = state.beforedit;
+        },
+
+        completeAll: state => {
+            if(state.checked){
+                state.todos.filter(todo => {
+                    todo.completed = true;
+                    
+                });
+                state.todosleft = state.todos.length; 
+            }
+            else {
+                state.todos.filter(todo => {
+                    todo.completed = false;
+                    
+                });
+                state.todosleft = 0;
+            }
+           
+            
+        },
+        isCompleted: (state, todo) => {
+            todo.completed = !todo.completed;
+            if(todo.completed === true) {
+                state.todosleft --;
+            }
+            else
+            {
+                state.todosleft ++;
+            }
+        },
+
+        showAll: state => {
+            state.flag = 0;
+        },
+
+        completedTodos: state => {
+            state.flag = 1;
+        },
+
+        incompletedTodos: state => {
+            state.flag = 2; 
         }
+
+        
 
     },
 
@@ -69,7 +120,29 @@ export const store = new Vuex.Store({
 
         cancelEdit: (context, todo) => {
             context.commit('cancelEdit', todo);
+        },
+
+        completeAll: context => {
+            context.commit('completeAll');
+        },
+
+        isCompleted: (context, todo) => {
+            context.commit('isCompleted', todo);
+        },
+
+        showAll: context => {
+            context.commit('showAll');
+        },
+
+        completedTodos: context => {
+            context.commit('completedTodos');
+        },
+
+        incompletedTodos: context => {
+            context.commit('incompletedTodos');
         }
+
+
     
     }
 })
