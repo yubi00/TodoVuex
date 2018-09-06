@@ -14,7 +14,7 @@ export default {
 
  computed: {
          count() {
-             var lefttodos = this.$store.state.todos.filter(todo => !todo.completed);
+            var lefttodos = this.$store.state.todos.filter(todo => !todo.completed);
             this.$store.state.todosleft = lefttodos.length;
             return this.$store.state.todosleft
        }

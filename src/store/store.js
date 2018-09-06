@@ -95,8 +95,21 @@ export const store = new Vuex.Store({
 
         incompletedTodos: state => {
             state.flag = 2; 
-        }
+        },
 
+
+        clearCompleted: state => {
+            var completedtodos = state.todos.filter(todo => todo.completed);
+            var length = completedtodos.length; 
+            var index = 0;
+            var i = 0;
+            for(i=0; i<length; i++) {
+                index = state.todos.indexOf(completedtodos[i]);
+                state.todos.splice(index, 1);
+            }
+
+            localStorage.setItem('items', JSON.stringify(state.todos));
+        }
         
 
     },
@@ -140,6 +153,10 @@ export const store = new Vuex.Store({
 
         incompletedTodos: context => {
             context.commit('incompletedTodos');
+        },
+
+        clearCompleted: context => {
+            context.commit('clearCompleted');
         }
 
 
